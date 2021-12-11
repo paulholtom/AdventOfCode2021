@@ -9,7 +9,16 @@ namespace AdventOfCode2021.Test.Days
         /// <summary>
         /// The test input.
         /// </summary>
-        const string TEST_DATA = @"INPUT";
+        const string TEST_DATA = @"5483143223
+2745854711
+5264556173
+6141336146
+6357385478
+4167524645
+2176841721
+6882881134
+4846848554
+5283751526";
 
         [TestMethod]
         public void Part1()
@@ -21,7 +30,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart1();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(1656, result);
         }
 
         [TestMethod]
@@ -34,7 +43,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart2();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(195, result);
         }
     }
 }
