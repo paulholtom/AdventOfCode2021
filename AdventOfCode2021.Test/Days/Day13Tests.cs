@@ -9,7 +9,27 @@ namespace AdventOfCode2021.Test.Days
         /// <summary>
         /// The test input.
         /// </summary>
-        const string TEST_DATA = @"INPUT";
+        const string TEST_DATA = @"6,10
+0,14
+9,10
+0,3
+10,4
+4,11
+6,0
+6,12
+4,1
+0,13
+10,12
+3,4
+3,0
+8,4
+1,10
+2,14
+8,10
+9,0
+
+fold along y=7
+fold along x=5";
 
         [TestMethod]
         public void Part1()
@@ -21,7 +41,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart1();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(17, result);
         }
 
         [TestMethod]
@@ -34,7 +54,14 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart2();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(@"#####
+#...#
+#...#
+#...#
+#####
+.....
+.....
+", result);
         }
     }
 }
