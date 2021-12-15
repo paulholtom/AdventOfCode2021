@@ -47,7 +47,7 @@ namespace AdventOfCode2021
                         yInner >= 0 &&
                         xInner < array.GetLength(0) &&
                         yInner < array.GetLength(1) &&
-                        (includeDiagonals || xInner == 0 || yInner == 0) && // Either include diagonals or make sure this point is orthogonal.
+                        (includeDiagonals || xInner == x || yInner == y) && // Either include diagonals or make sure this point is orthogonal.
                         !(xInner == x && yInner == y) // Don't do the action for the original point.
                         )
                         action(xInner, yInner);
