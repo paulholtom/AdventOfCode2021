@@ -41,38 +41,30 @@ namespace AdventOfCode2021.Days.Day15
             // The length of the best path to each point and the previous point on that path.
             var bestPaths = new Dictionary<Point, int>();
             var previousPoint = new Dictionary<Point, Point>();
-            var unvisited = new List<Point>();
             risks.ForEach((x, y) =>
             {
                 var p = new Point(x, y);
                 // The best paths found so far.
                 bestPaths[p] = int.MaxValue;
-                // Points that haven't had their distance determined yet.
-                unvisited.Add(p);
             });
             bestPaths[new Point(0, 0)] = 0;
 
             Dictionary<Point, int> pending = new();
             pending.Add(new Point(0, 0), 0);
 
-            while (unvisited.Count > 0)
+            while (pending.Count > 0)
             {
                 var currentPoint = pending.OrderBy(p => p.Value).First().Key;
                 pending.Remove(currentPoint);
 
-                unvisited.Remove(currentPoint);
-
                 risks.ForEachAdjacent(currentPoint.X, currentPoint.Y, false, (x, y) =>
                 {
                     var dest = new Point(x, y);
-                    if (unvisited.Contains(dest))
+                    var distance = bestPaths[currentPoint] + risks[x, y];
+                    if (distance < bestPaths[dest])
                     {
-                        var distance = bestPaths[currentPoint] + risks[x, y];
-                        if (distance < bestPaths[dest])
-                        {
-                            pending[dest] = bestPaths[dest] = distance;
-                            previousPoint[dest] = currentPoint;
-                        }
+                        pending[dest] = bestPaths[dest] = distance;
+                        previousPoint[dest] = currentPoint;
                     }
                 });
             }
