@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode2021.BITS;
 
 namespace AdventOfCode2021.Days.Day16
 {
@@ -11,9 +12,17 @@ namespace AdventOfCode2021.Days.Day16
         /// <inheritdoc/>
         protected override int Day => 16;
 
+        /// <summary>
+        /// The packets.
+        /// </summary>
+        protected Packet Packet { get; }
+
         /// <inheritdoc/>
         public Solution(string? input = null) : base(input)
         {
+            var parser = new PacketParser(Input);
+
+            Packet = parser.ParseSingle();            
         }
 
         /// <summary>
@@ -22,16 +31,16 @@ namespace AdventOfCode2021.Days.Day16
         /// <returns>The solution for part 1</returns>
         public int RunPart1()
         {
-            return 0;
+            return Packet.SumVersions();
         }
 
         /// <summary>
         /// Solve part 2.
         /// </summary>
         /// <returns>The solution for part 2.</returns>
-        public int RunPart2()
+        public long RunPart2()
         {
-            return 0;
+            return Packet.GetValue();
         }
 
         /// <inheritdoc/>
