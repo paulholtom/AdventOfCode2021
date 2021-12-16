@@ -49,6 +49,8 @@ namespace AdventOfCode2021.Days.Day15
             });
             bestPaths[new Point(0, 0)] = 0;
 
+            var finalDest = new Point(risks.GetLength(0) - 1, risks.GetLength(1) - 1);
+
             Dictionary<Point, int> pending = new();
             pending.Add(new Point(0, 0), 0);
 
@@ -56,6 +58,9 @@ namespace AdventOfCode2021.Days.Day15
             {
                 var currentPoint = pending.OrderBy(p => p.Value).First().Key;
                 pending.Remove(currentPoint);
+
+                if (currentPoint == finalDest)
+                    return bestPaths[currentPoint];
 
                 risks.ForEachAdjacent(currentPoint.X, currentPoint.Y, false, (x, y) =>
                 {
