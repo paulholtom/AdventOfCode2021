@@ -1,1 +1,1 @@
-﻿Some Input
+﻿target area: x=135..155, y=-102..-78

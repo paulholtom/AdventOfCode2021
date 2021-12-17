@@ -9,7 +9,7 @@ namespace AdventOfCode2021.Test.Days
         /// <summary>
         /// The test input.
         /// </summary>
-        const string TEST_DATA = @"INPUT";
+        const string TEST_DATA = @"target area: x=20..30, y=-10..-5";
 
         [TestMethod]
         public void Part1()
@@ -21,7 +21,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart1();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(45, result);
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart2();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(112, result);
         }
     }
 }
