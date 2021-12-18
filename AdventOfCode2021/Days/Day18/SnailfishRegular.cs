@@ -40,7 +40,6 @@ namespace AdventOfCode2021.Days.Day18
                 var replacement = new SnailfishPair(
                     new SnailfishRegular((int)Math.Floor(Value/2f)), 
                     new SnailfishRegular((int)Math.Ceiling(Value/2f)));
-                replacement.Parent = Parent;
 
                 if(Parent?.Left == this) 
                     Parent.Left = replacement;

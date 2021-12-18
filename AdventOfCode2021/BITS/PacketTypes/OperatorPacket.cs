@@ -14,7 +14,7 @@ namespace AdventOfCode2021.BITS.PacketTypes
         /// <summary>
         /// The sub packets.
         /// </summary>
-        protected Packet[] SubPackets { get; }
+        public Packet[] SubPackets { get; }
 
         /// <summary>
         /// Constructor.

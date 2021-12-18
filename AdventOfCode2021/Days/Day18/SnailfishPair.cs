@@ -11,11 +11,27 @@ namespace AdventOfCode2021.Days.Day18
         /// <summary>
         /// The left part.
         /// </summary>
-        public SnailfishNumberPart Left { get; set; }
+        public SnailfishNumberPart Left
+        {
+            get => _Left; set
+            {
+                _Left = value;
+                _Left.Parent = this;
+            }
+        }
+        private SnailfishNumberPart _Left;
         /// <summary>
         /// The right part.
         /// </summary>
-        public SnailfishNumberPart Right { get; set; }
+        public SnailfishNumberPart Right
+        {
+            get => _Right; set
+            {
+                _Right = value;
+                _Right.Parent = this;
+            }
+        }
+        private SnailfishNumberPart _Right;
 
         /// <summary>
         /// Constructor.
@@ -24,10 +40,10 @@ namespace AdventOfCode2021.Days.Day18
         /// <param name="right">The right part.</param>
         public SnailfishPair(SnailfishNumberPart left, SnailfishNumberPart right)
         {
-            Left = left;
-            Right = right;
-            Left.Parent = this;
-            Right.Parent = this;
+            _Left = left;
+            _Left.Parent = this;
+            _Right = right;
+            _Right.Parent = this;
         }
 
         /// <inheritdoc/>
@@ -86,7 +102,6 @@ namespace AdventOfCode2021.Days.Day18
 
             // Replace this in the parent with a 0.
             var replacement = new SnailfishRegular(0);
-            replacement.Parent = Parent;
             if (Parent?.Left == this)
                 Parent.Left = replacement;
             else if (Parent?.Right == this)
