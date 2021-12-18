@@ -15,7 +15,7 @@ namespace AdventOfCode2021.Test.Coordinates
         /// <summary>
         /// Test grid.
         /// </summary>
-        protected Grid2d _grid;
+        protected Grid2d _grid = new();
 
         [TestInitialize]
         public void TestStartup()
