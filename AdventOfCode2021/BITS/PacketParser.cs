@@ -91,99 +91,77 @@ namespace AdventOfCode2021.BITS
         /// <returns>The packet.</returns>
         public Packet ParseSingle()
         {
-            var (packets, _) = ParsePacketsInString(BitString, 1);
-            return packets[0];
-        }
+            var version = Convert.ToInt32(BitString.Substring(Position, VERSION_SIZE), 2);
+            Position += VERSION_SIZE;
+            var typeId = Convert.ToInt32(BitString.Substring(Position, TYPE_ID_SIZE), 2);
+            Position += TYPE_ID_SIZE;
 
-        /// <summary>
-        /// Parse the packets in the provided string.
-        /// </summary>
-        /// <param name="bitString">The string to parse.</param>
-        /// <param name="numPackets">The number of packets to stop at. Anything below 0 means parse until the end of the string.</param>
-        /// <returns>The parsed packets and how much of the string was read to parse those packets.</returns>
-        private (Packet[], int) ParsePacketsInString(string bitString, int numPackets = -1)
-        {
-            int position = 0;
-            List<Packet> packets = new List<Packet>();
-            while (position < bitString.Length - 6 && (numPackets < 0 || packets.Count < numPackets))
+            if (typeId == LITERAL)
             {
-                var version = Convert.ToInt32(bitString.Substring(position, VERSION_SIZE), 2);
-                position += VERSION_SIZE;
-                var typeId = Convert.ToInt32(bitString.Substring(position, TYPE_ID_SIZE), 2);
-                position += TYPE_ID_SIZE;
-
-                if(typeId == LITERAL)
+                // Get the parts of the binary number until one of the chunks starts with 0.
+                StringBuilder number = new();
+                while (BitString[Position] != '0')
                 {
-                    // Get the parts of the binary number until one of the chunks starts with 0.
-                    StringBuilder number = new();
-                    while (bitString[position] != '0')
-                    {
-                        // Add the next 4 bits to the number string.
-                        number.Append(bitString.Substring(position + 1, 4));
-                        position += 5;
-                    }
+                    // Add the next 4 bits to the number string.
+                    number.Append(BitString.Substring(Position + 1, 4));
+                    Position += 5;
+                }
 
-                    // Get the last part.
-                    number.Append(bitString.Substring(position + 1, 4));
-                    position += 5;
+                // Get the last part.
+                number.Append(BitString.Substring(Position + 1, 4));
+                Position += 5;
 
-                    // Create the literal packet.
-                    packets.Add(new Literal(version, typeId, Convert.ToInt64(number.ToString(), 2)));
+                // Create the literal packet.
+                return new Literal(version, typeId, Convert.ToInt64(number.ToString(), 2));
+            }
+            else
+            {
+                // An operator of some sort.
+                var mode = BitString[Position];
+                Position++;
+                var subPackets = new List<Packet>();
+                if (mode == '0')
+                {
+                    var length = Convert.ToInt32(BitString.Substring(Position, LENGTH_MODE_BIT), 2);
+                    Position += LENGTH_MODE_BIT;
+
+                    var end = Position + length;
+
+                    // We can parse all of the packets in the string
+                    while (Position < end)
+                        subPackets.Add(ParseSingle());
                 }
                 else
                 {
-                    // An operator of some sort.
-                    var mode = bitString[position];
-                    position++;
-                    Packet[] subPackets;
-                    if (mode == '0')
+                    var packetCount = Convert.ToInt32(BitString.Substring(Position, LENGTH_MODE_PACKET), 2);
+                    Position += LENGTH_MODE_PACKET;
+
+                    // Parse until we've found the appropriate number of packets.
+                    for (int i = 0; i < packetCount; i++)
                     {
-                        var length = Convert.ToInt32(bitString.Substring(position, LENGTH_MODE_BIT), 2);
-                        position += LENGTH_MODE_BIT;
-
-                        // We can parse all of the packets in the string
-                        (subPackets, var _) = ParsePacketsInString(bitString.Substring(position, length));
-
-                        position += length;
-                    }
-                    else
-                    {
-                        var packetCount = Convert.ToInt32(bitString.Substring(position, LENGTH_MODE_PACKET), 2);
-                        position += LENGTH_MODE_PACKET;
-
-                        // Parse until we've found the appropriate number of packets.
-                        (subPackets, var distance) = ParsePacketsInString(bitString.Substring(position), packetCount);
-                        position += distance;
-                    }
-
-                    switch (typeId)
-                    {
-                        case SUM:
-                            packets.Add(new Sum(version, typeId, subPackets));
-                            break;
-                        case PRODUCT:
-                            packets.Add(new Product(version, typeId, subPackets));
-                            break;
-                        case MINIMUM:
-                            packets.Add(new Minimum(version, typeId, subPackets));
-                            break;
-                        case MAXIMUM:
-                            packets.Add(new Maximum(version, typeId, subPackets));
-                            break;
-                        case GREATER:
-                            packets.Add(new Greater(version, typeId, subPackets));
-                            break;
-                        case LESS:
-                            packets.Add(new Less(version, typeId, subPackets));
-                            break;
-                        case EQUAL:
-                            packets.Add(new Equal(version, typeId, subPackets));
-                            break;
+                        subPackets.Add(ParseSingle());
                     }
                 }
-            }
 
-            return (packets.ToArray(), position);
+                switch (typeId)
+                {
+                    case SUM:
+                        return new Sum(version, typeId, subPackets.ToArray());
+                    case PRODUCT:
+                        return new Product(version, typeId, subPackets.ToArray());
+                    case MINIMUM:
+                        return new Minimum(version, typeId, subPackets.ToArray());
+                    case MAXIMUM:
+                        return new Maximum(version, typeId, subPackets.ToArray());
+                    case GREATER:
+                        return new Greater(version, typeId, subPackets.ToArray());
+                    case LESS:
+                        return new Less(version, typeId, subPackets.ToArray());
+                    case EQUAL:
+                    default:
+                        return new Equal(version, typeId, subPackets.ToArray());
+                }
+            }
         }
     }
 }
