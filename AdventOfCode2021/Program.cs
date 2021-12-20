@@ -1,3 +1,3 @@
 ﻿// See https://aka.ms/new-console-template for more information
-var sol = new AdventOfCode2021.Days.Day19.Solution();
+var sol = new AdventOfCode2021.Days.Day20.Solution();
 Console.WriteLine(sol.Run());
