@@ -63,17 +63,14 @@ namespace AdventOfCode2021.Days.Day21
         /// Handle the results of all splits from a single turn.
         /// </summary>
         /// <param name="player">The player who's turn it is.</param>
-        /// <param name="rollTotal">The total of the rolls that led to this split.</param>
         /// <param name="scores">The current scores of the players.</param>
         /// <param name="positions">The current positions of the players.</param>
         /// <returns>The number of branches from here that result in each player winning.</returns>
-        public long[] UniverseSplit(int player, int rollTotal, int[] scores, int[] positions)
+        public long[] UniverseSplit(int player, int[] scores, int[] positions)
         {
-            string key = $"{player}_{rollTotal}_{scores[0]}_{scores[1]}_{positions[0]}_{positions[1]}";
+            string key = $"{player}_{scores[0]}_{scores[1]}_{positions[0]}_{positions[1]}";
             if (CachedWinCounts.ContainsKey(key)) 
                 return CachedWinCounts[key];
-            positions[player] = (positions[player] + rollTotal) % 10;
-            scores[player] += positions[player] + 1;
 
             var returnValue = new long[2];
             if (scores[player] >= 21)
@@ -90,9 +87,20 @@ namespace AdventOfCode2021.Days.Day21
                     {
                         for (var roll3 = 1; roll3 <= 3; ++roll3)
                         {
-                            var val = UniverseSplit(nextPlayer, roll1 + roll2 + roll3, (int[])scores.Clone(), (int[])positions.Clone());
-                            returnValue[0] += val[0];
-                            returnValue[1] += val[1];
+                            var newPositions = (int[])positions.Clone();
+                            newPositions[player] = (newPositions[player] + roll1 + roll2 + roll3) % 10;
+                            var newScores = (int[])scores.Clone();
+                            newScores[player] += newPositions[player] + 1;
+                            if (newScores[player] >= 21)
+                            {
+                                returnValue[player]++;
+                            }
+                            else
+                            {
+                                var val = UniverseSplit(nextPlayer, newScores, newPositions);
+                                returnValue[0] += val[0];
+                                returnValue[1] += val[1];
+                            }
                         }
                     }
                 }
@@ -111,19 +119,7 @@ namespace AdventOfCode2021.Days.Day21
             var positions = new int[StartingPositions.Length];
             var scores = new int[StartingPositions.Length];
             StartingPositions.CopyTo(positions, 0);
-            var winCounts = new long[StartingPositions.Length];
-            for (var roll1 = 1; roll1 <= 3; ++roll1)
-            {
-                for (var roll2 = 1; roll2 <= 3; ++roll2)
-                {
-                    for (var roll3 = 1; roll3 <= 3; ++roll3)
-                    {
-                        var val = UniverseSplit(0, roll1 + roll2 + roll3, (int[])scores.Clone(), (int[])positions.Clone());
-                        winCounts[0] += val[0];
-                        winCounts[1] += val[1];
-                    }
-                }
-            }
+            var winCounts = UniverseSplit(0, scores, positions);
             return winCounts.Max();
         }
 
