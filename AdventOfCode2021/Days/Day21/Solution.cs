@@ -69,38 +69,32 @@ namespace AdventOfCode2021.Days.Day21
         public long[] UniverseSplit(int player, int[] scores, int[] positions)
         {
             string key = $"{player}_{scores[0]}_{scores[1]}_{positions[0]}_{positions[1]}";
-            if (CachedWinCounts.ContainsKey(key)) 
+            if (CachedWinCounts.ContainsKey(key))
                 return CachedWinCounts[key];
 
             var returnValue = new long[2];
-            if (scores[player] >= 21)
-            {
-                returnValue[player] = 1;
-            }
-            else
-            {
-                var nextPlayer = (player + 1) % 2;
 
-                for (var roll1 = 1; roll1 <= 3; ++roll1)
+            var nextPlayer = (player + 1) % 2;
+
+            for (var roll1 = 1; roll1 <= 3; ++roll1)
+            {
+                for (var roll2 = 1; roll2 <= 3; ++roll2)
                 {
-                    for (var roll2 = 1; roll2 <= 3; ++roll2)
+                    for (var roll3 = 1; roll3 <= 3; ++roll3)
                     {
-                        for (var roll3 = 1; roll3 <= 3; ++roll3)
+                        var newPositions = (int[])positions.Clone();
+                        newPositions[player] = (newPositions[player] + roll1 + roll2 + roll3) % 10;
+                        var newScores = (int[])scores.Clone();
+                        newScores[player] += newPositions[player] + 1;
+                        if (newScores[player] >= 21)
                         {
-                            var newPositions = (int[])positions.Clone();
-                            newPositions[player] = (newPositions[player] + roll1 + roll2 + roll3) % 10;
-                            var newScores = (int[])scores.Clone();
-                            newScores[player] += newPositions[player] + 1;
-                            if (newScores[player] >= 21)
-                            {
-                                returnValue[player]++;
-                            }
-                            else
-                            {
-                                var val = UniverseSplit(nextPlayer, newScores, newPositions);
-                                returnValue[0] += val[0];
-                                returnValue[1] += val[1];
-                            }
+                            returnValue[player]++;
+                        }
+                        else
+                        {
+                            var val = UniverseSplit(nextPlayer, newScores, newPositions);
+                            returnValue[0] += val[0];
+                            returnValue[1] += val[1];
                         }
                     }
                 }
