@@ -9,7 +9,8 @@ namespace AdventOfCode2021.Test.Days
         /// <summary>
         /// The test input.
         /// </summary>
-        const string TEST_DATA = @"INPUT";
+        const string TEST_DATA = @"Player 1 starting position: 4
+Player 2 starting position: 8";
 
         [TestMethod]
         public void Part1()
@@ -21,7 +22,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart1();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(739785, result);
         }
 
         [TestMethod]
@@ -34,7 +35,7 @@ namespace AdventOfCode2021.Test.Days
             var result = sol.RunPart2();
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(444356092776315, result);
         }
     }
 }
