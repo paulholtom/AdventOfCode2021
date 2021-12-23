@@ -38,27 +38,15 @@ namespace AdventOfCode2021.Days.Day23
             var key = state.ToString();
             if (CachedCheapest.ContainsKey(key)) return CachedCheapest[key];
             if (state.IsComplete()) return 0;
-            int min = int.MaxValue;
+            int? min = null;
             var moves = state.GetValidMoves();
-            if (moves.Length == 0)
-            {
-                CachedCheapest[key] = null;
-                return null;
-            }
-            bool foundPath = false;
             foreach(var move in moves)
             {
                 var cost = move.Cost + GetCheapestFromState(move.State);
-                if (cost != null && cost < min)
+                if (cost != null && (min == null || cost < min))
                 {
-                    foundPath = true;
                     min = cost.Value;
                 }
-            }
-            if (!foundPath)
-            {
-                CachedCheapest[key] = null;
-                return null;
             }
             CachedCheapest[key] = min;
             return min;
