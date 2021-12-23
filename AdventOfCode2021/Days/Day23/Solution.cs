@@ -11,9 +11,57 @@ namespace AdventOfCode2021.Days.Day23
         /// <inheritdoc/>
         protected override int Day => 23;
 
+        /// <summary>
+        /// A cache of the cheapest paths from various states.
+        /// </summary>
+        public Dictionary<string, int?> CachedCheapest { get; }
+
+        /// <summary>
+        /// The input brokenm up into lines.
+        /// </summary>
+        public string[] InputLines { get; }
+
         /// <inheritdoc/>
         public Solution(string? input = null) : base(input)
         {
+            CachedCheapest = new();
+            InputLines = Input.SplitLines();
+        }
+
+        /// <summary>
+        /// Get the cost of the cheapest path from this state to the completed state.
+        /// </summary>
+        /// <param name="state">The state to check from.</param>
+        /// <returns>The value of the cheapest path. Null if there is no path to completion.</returns>
+        public int? GetCheapestFromState(State state)
+        {
+            var key = state.ToString();
+            if (CachedCheapest.ContainsKey(key)) return CachedCheapest[key];
+            if (state.IsComplete()) return 0;
+            int min = int.MaxValue;
+            var moves = state.GetValidMoves();
+            if (moves.Length == 0)
+            {
+                CachedCheapest[key] = null;
+                return null;
+            }
+            bool foundPath = false;
+            foreach(var move in moves)
+            {
+                var cost = move.Cost + GetCheapestFromState(move.State);
+                if (cost != null && cost < min)
+                {
+                    foundPath = true;
+                    min = cost.Value;
+                }
+            }
+            if (!foundPath)
+            {
+                CachedCheapest[key] = null;
+                return null;
+            }
+            CachedCheapest[key] = min;
+            return min;
         }
 
         /// <summary>
@@ -22,7 +70,10 @@ namespace AdventOfCode2021.Days.Day23
         /// <returns>The solution for part 1</returns>
         public int RunPart1()
         {
-            return 0;
+            var state = new State(InputLines, 2);
+            var val = GetCheapestFromState(state);
+            if (val != null) return val.Value;
+            return int.MaxValue;
         }
 
         /// <summary>
@@ -31,7 +82,22 @@ namespace AdventOfCode2021.Days.Day23
         /// <returns>The solution for part 2.</returns>
         public int RunPart2()
         {
-            return 0;
+            var lines = new string[InputLines.Length + 2];
+            lines[0] = InputLines[0];
+            lines[1] = InputLines[1];
+            lines[2] = InputLines[2];
+            
+            lines[3] = "  #D#C#B#A#";
+            lines[4] = "  #D#B#A#C#";
+
+            lines[5] = InputLines[3];
+            lines[6] = InputLines[4];
+
+            var state = new State(lines, 4);
+
+            var val = GetCheapestFromState(state);
+            if (val != null) return val.Value;
+            return int.MaxValue;
         }
 
         /// <inheritdoc/>
